@@ -1,16 +1,23 @@
 package server
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"bank-account-manager/storage"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 type Server struct {
-	App *fiber.App
+	App     *fiber.App
+	Storage *storage.Storage
 }
 
 func Create() *Server {
 	app := fiber.New()
+	storage := storage.Create()
 
 	return &Server{
-		App: app,
+		App:     app,
+		Storage: storage,
 	}
 }
 
