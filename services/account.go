@@ -15,13 +15,15 @@ type AccountService struct {
 	Storage *storage.Storage
 }
 
+var ErrAccountNotFound = fmt.Errorf("account not found")
+
 func CreateAccountService(server *server.Server) *AccountService {
 	return &AccountService{
 		Storage: server.Storage,
 	}
 }
 
-func (service *AccountService) Create(request requests.AccountRequest) error {
+func (service *AccountService) Create(request requests.AccountRequest) (models.Account, error) {
 	newUUID := uuid.New()
 	account := models.Account{
 		ID:      newUUID,
@@ -31,10 +33,10 @@ func (service *AccountService) Create(request requests.AccountRequest) error {
 
 	(*service.Storage.Accounts)[newUUID] = account
 
-	return nil
+	return account, nil
 }
 
-func (service *AccountService) Read(id string) (models.Account, error) {
+func (service *AccountService) ReadOne(id string) (models.Account, error) {
 	parsedUUID, err := uuid.Parse(id)
 	if err != nil {
 		return models.Account{}, err
@@ -42,7 +44,7 @@ func (service *AccountService) Read(id string) (models.Account, error) {
 
 	account, ok := (*service.Storage.Accounts)[parsedUUID]
 	if !ok {
-		return models.Account{}, fmt.Errorf("account not found")
+		return models.Account{}, ErrAccountNotFound
 	}
 
 	return account, nil

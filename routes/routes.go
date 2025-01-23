@@ -22,4 +22,5 @@ func ConfigRoutes(server *server.Server) {
 	accountHandler := handlers.CreateAccountHandler(server)
 
 	apiV1.Post("/accounts", accountHandler.Create)
+	apiV1.Get("/accounts/:id", accountHandler.ReadOne)
 }

@@ -6,14 +6,18 @@ definitions:
       owner:
         type: string
     type: object
+  responses.Account:
+    properties:
+      balance:
+        type: number
+      id:
+        type: string
+      owner:
+        type: string
+    type: object
   responses.Error:
     properties:
       error:
-        type: string
-    type: object
-  responses.Message:
-    properties:
-      message:
         type: string
     type: object
 info:
@@ -37,7 +41,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/responses.Message'
+            $ref: '#/definitions/responses.Account'
         "400":
           description: Bad Request
           schema:
@@ -47,6 +51,39 @@ paths:
           schema:
             $ref: '#/definitions/responses.Error'
       summary: Create a new bank account
+      tags:
+      - Accounts
+  /api/v1/accounts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a bank account's details by its ID
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Account'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.Error'
+      summary: Get a bank account by ID
       tags:
       - Accounts
 swagger: "2.0"
