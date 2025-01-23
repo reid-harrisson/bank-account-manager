@@ -137,6 +137,36 @@ paths:
       tags:
       - Accounts
   /api/v1/accounts/{id}/transactions:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all transactions for the specified bank account
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.Transaction'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.Error'
+      summary: Get account transactions
+      tags:
+      - Transactions
     post:
       consumes:
       - application/json
