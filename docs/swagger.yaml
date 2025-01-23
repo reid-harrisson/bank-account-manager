@@ -6,6 +6,13 @@ definitions:
       owner:
         type: string
     type: object
+  requests.TransactionRequest:
+    properties:
+      amount:
+        type: number
+      type:
+        $ref: '#/definitions/utils.TransactionType'
+    type: object
   responses.Account:
     properties:
       balance:
@@ -20,6 +27,29 @@ definitions:
       error:
         type: string
     type: object
+  responses.Transaction:
+    properties:
+      account_id:
+        type: string
+      balance:
+        type: number
+      id:
+        type: string
+      timestamp:
+        type: string
+      type:
+        type: string
+    type: object
+  utils.TransactionType:
+    enum:
+    - 0
+    - 1
+    - 2
+    type: integer
+    x-enum-varnames:
+    - Deposit
+    - Withdrawal
+    - Invalid
 info:
   contact: {}
 paths:
@@ -106,4 +136,39 @@ paths:
       summary: Get a bank account by ID
       tags:
       - Accounts
+  /api/v1/accounts/{id}/transactions:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new transaction for the specified bank account
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Transaction details
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/requests.TransactionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responses.Transaction'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.Error'
+      summary: Create a new transaction
+      tags:
+      - Transactions
 swagger: "2.0"
