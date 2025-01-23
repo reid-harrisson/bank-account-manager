@@ -17,7 +17,7 @@ type TransactionHandler struct {
 
 func CreateTransactionHandler(server *server.Server) *TransactionHandler {
 	return &TransactionHandler{
-		TransactionService: services.CreateTransactionService(server),
+		TransactionService: services.CreateTransactionService(server.Storage),
 	}
 }
 
@@ -114,6 +114,10 @@ func (handler *TransactionHandler) Transfer(context *fiber.Ctx) error {
 
 	if err := request.Validate(); err != nil {
 		return responses.ErrorResponse(context, http.StatusBadRequest, "Validation failed")
+	}
+
+	if request.FromAcountID == request.ToAccountID {
+		return responses.ErrorResponse(context, http.StatusBadRequest, "From and To account IDs cannot be the same")
 	}
 
 	err := handler.TransactionService.Transfer(request)

@@ -3,7 +3,6 @@ package services
 import (
 	"bank-account-manager/models"
 	"bank-account-manager/requests"
-	"bank-account-manager/server"
 	"bank-account-manager/storage"
 	"bank-account-manager/utils"
 
@@ -14,9 +13,9 @@ type AccountService struct {
 	Storage *storage.Storage
 }
 
-func CreateAccountService(server *server.Server) *AccountService {
+func CreateAccountService(storage *storage.Storage) *AccountService {
 	return &AccountService{
-		Storage: server.Storage,
+		Storage: storage,
 	}
 }
 
@@ -27,6 +26,9 @@ func (service *AccountService) Create(request requests.AccountRequest) (models.A
 		Owner:   request.Owner,
 		Balance: request.InitialBalance,
 	}
+
+	service.Storage.Mutex.Lock()
+	defer service.Storage.Mutex.Unlock()
 
 	index := len(service.Storage.Accounts)
 	service.Storage.Accounts = append(service.Storage.Accounts, account)
@@ -40,6 +42,9 @@ func (service *AccountService) ReadOne(id string) (models.Account, error) {
 		return models.Account{}, utils.ErrInvalidUUID
 	}
 
+	service.Storage.Mutex.Lock()
+	defer service.Storage.Mutex.Unlock()
+
 	index, ok := service.Storage.AccountIndices[parsedUUID]
 	if !ok {
 		return models.Account{}, utils.ErrAccountNotFound
@@ -49,5 +54,9 @@ func (service *AccountService) ReadOne(id string) (models.Account, error) {
 }
 
 func (service *AccountService) ReadAll() ([]models.Account, error) {
+
+	service.Storage.Mutex.Lock()
+	defer service.Storage.Mutex.Unlock()
+
 	return service.Storage.Accounts, nil
 }
