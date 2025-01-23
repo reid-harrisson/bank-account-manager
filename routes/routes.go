@@ -28,4 +28,5 @@ func ConfigRoutes(server *server.Server) {
 	transactionHandler := handlers.CreateTransactionHandler(server)
 
 	apiV1.Post("/accounts/:id/transactions", transactionHandler.Create)
+	apiV1.Get("/accounts/:id/transactions", transactionHandler.ReadByAccount)
 }
