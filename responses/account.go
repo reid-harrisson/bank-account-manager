@@ -19,3 +19,16 @@ func AccountResponse(ctx *fiber.Ctx, status int, account models.Account) error {
 		Balance: account.Balance,
 	})
 }
+
+func AccountResponses(ctx *fiber.Ctx, status int, accounts []models.Account) error {
+	accountResponses := []Account{}
+	for _, account := range accounts {
+		accountResponses = append(accountResponses, Account{
+			ID:      account.ID.String(),
+			Owner:   account.Owner,
+			Balance: account.Balance,
+		})
+	}
+
+	return Response(ctx, status, accountResponses)
+}
