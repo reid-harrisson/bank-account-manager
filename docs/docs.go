@@ -291,10 +291,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "inital_balance": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 100
                 },
                 "owner": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "account"
                 }
             }
         },
@@ -302,10 +304,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "amount": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 100
                 },
                 "type": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "deposit/withdrawal"
                 }
             }
         },

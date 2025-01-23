@@ -5,8 +5,8 @@ import (
 )
 
 type TransactionRequest struct {
-	Type   string  `json:"type"`
-	Amount float64 `json:"amount"`
+	Type   string  `json:"type" example:"deposit/withdrawal"`
+	Amount float64 `json:"amount" example:"100"`
 }
 
 func (request TransactionRequest) Validate() error {
