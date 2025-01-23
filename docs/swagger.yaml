@@ -3,15 +3,19 @@ definitions:
   requests.AccountRequest:
     properties:
       inital_balance:
+        example: 100
         type: number
       owner:
+        example: account
         type: string
     type: object
   requests.TransactionRequest:
     properties:
       amount:
+        example: 100
         type: number
       type:
+        example: deposit/withdrawal
         type: string
     type: object
   requests.TransferRequest:
