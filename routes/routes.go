@@ -5,6 +5,7 @@ import (
 	"bank-account-manager/handlers"
 	"bank-account-manager/server"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 )
 
@@ -16,7 +17,7 @@ import (
 // @BasePath /api/v1/
 func ConfigRoutes(server *server.Server) {
 	server.App.Get("/swagger/*", swagger.HandlerDefault)
-
+	server.App.Get("/", redirectToSwagger)
 	apiV1 := server.App.Group("api/v1")
 
 	accountHandler := handlers.CreateAccountHandler(server)
@@ -30,4 +31,8 @@ func ConfigRoutes(server *server.Server) {
 	apiV1.Post("/accounts/:id/transactions", transactionHandler.Create)
 	apiV1.Get("/accounts/:id/transactions", transactionHandler.ReadByAccount)
 	apiV1.Post("/transfer", transactionHandler.Transfer)
+}
+
+func redirectToSwagger(context *fiber.Ctx) error {
+	return context.Redirect("/swagger/index.html")
 }
