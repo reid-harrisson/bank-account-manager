@@ -21,12 +21,12 @@ func CreateTransactionService(server *server.Server) *TransactionService {
 	}
 }
 
-func (service *TransactionService) Create(accountId string, request requests.TransactionRequest) error {
+func (service *TransactionService) Create(accountId string, request requests.TransactionRequest) (models.Transaction, error) {
 	newUUID := uuid.New()
 
 	parsedAccountUUID, err := uuid.Parse(accountId)
 	if err != nil {
-		return err
+		return models.Transaction{}, err
 	}
 
 	transaction := models.Transaction{
@@ -39,7 +39,7 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 
 	(*service.Storage.Transactions)[newUUID] = transaction
 
-	return nil
+	return transaction, nil
 }
 
 func (service *TransactionService) ReadByAccount(accountId string) ([]models.Transaction, error) {
@@ -60,7 +60,7 @@ func (service *TransactionService) ReadByAccount(accountId string) ([]models.Tra
 }
 
 func (services *TransactionService) Transfer(request requests.TransferRequest) error {
-	err := services.Create(request.FromAcountID, requests.TransactionRequest{
+	_, err := services.Create(request.FromAcountID, requests.TransactionRequest{
 		Type:   utils.Withdrawal,
 		Amount: request.Amount,
 	})
@@ -69,7 +69,7 @@ func (services *TransactionService) Transfer(request requests.TransferRequest) e
 		return err
 	}
 
-	err = services.Create(request.ToAccountID, requests.TransactionRequest{
+	_, err = services.Create(request.ToAccountID, requests.TransactionRequest{
 		Type:   utils.Deposit,
 		Amount: request.Amount,
 	})
