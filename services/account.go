@@ -28,8 +28,9 @@ func (service *AccountService) Create(request requests.AccountRequest) (models.A
 		Balance: request.InitialBalance,
 	}
 
-	(*service.Storage.Accounts)[newUUID] = account
-
+	index := len(service.Storage.Accounts)
+	service.Storage.Accounts = append(service.Storage.Accounts, account)
+	service.Storage.AccountIndices[newUUID] = index
 	return account, nil
 }
 
@@ -39,20 +40,14 @@ func (service *AccountService) ReadOne(id string) (models.Account, error) {
 		return models.Account{}, utils.ErrInvalidUUID
 	}
 
-	account, ok := (*service.Storage.Accounts)[parsedUUID]
+	index, ok := service.Storage.AccountIndices[parsedUUID]
 	if !ok {
 		return models.Account{}, utils.ErrAccountNotFound
 	}
 
-	return account, nil
+	return service.Storage.Accounts[index], nil
 }
 
 func (service *AccountService) ReadAll() ([]models.Account, error) {
-	accounts := []models.Account{}
-
-	for _, account := range *service.Storage.Accounts {
-		accounts = append(accounts, account)
-	}
-
-	return accounts, nil
+	return service.Storage.Accounts, nil
 }
