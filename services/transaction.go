@@ -26,13 +26,35 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 
 	parsedAccountUUID, err := uuid.Parse(accountId)
 	if err != nil {
-		return models.Transaction{}, err
+		return models.Transaction{}, utils.ErrInvalidUUID
 	}
+
+	parsedType, err := utils.ParseTransactionType(request.Type)
+	if err != nil {
+		return models.Transaction{}, utils.ErrInvalidTransactionType
+	}
+
+	account, ok := (*service.Storage.Accounts)[parsedAccountUUID]
+	if !ok {
+		return models.Transaction{}, utils.ErrAccountNotFound
+	}
+
+	if parsedType == utils.Withdrawal && account.Balance < request.Amount {
+		return models.Transaction{}, utils.ErrInsufficientFunds
+	}
+
+	if parsedType == utils.Deposit {
+		account.Balance += request.Amount
+	} else if parsedType == utils.Withdrawal {
+		account.Balance -= request.Amount
+	}
+
+	(*service.Storage.Accounts)[parsedAccountUUID] = account
 
 	transaction := models.Transaction{
 		ID:        newUUID,
 		AccountID: parsedAccountUUID,
-		Type:      request.Type,
+		Type:      parsedType,
 		Amount:    request.Amount,
 		TimeStamp: time.Now(),
 	}
@@ -47,7 +69,12 @@ func (service *TransactionService) ReadByAccount(accountId string) ([]models.Tra
 
 	parsedAccountUUID, err := uuid.Parse(accountId)
 	if err != nil {
-		return transactions, err
+		return transactions, utils.ErrInvalidUUID
+	}
+
+	_, ok := (*service.Storage.Accounts)[parsedAccountUUID]
+	if !ok {
+		return transactions, utils.ErrAccountNotFound
 	}
 
 	for _, transaction := range *service.Storage.Transactions {
@@ -61,7 +88,7 @@ func (service *TransactionService) ReadByAccount(accountId string) ([]models.Tra
 
 func (services *TransactionService) Transfer(request requests.TransferRequest) error {
 	_, err := services.Create(request.FromAcountID, requests.TransactionRequest{
-		Type:   utils.Withdrawal,
+		Type:   utils.Withdrawal.String(),
 		Amount: request.Amount,
 	})
 
@@ -70,7 +97,7 @@ func (services *TransactionService) Transfer(request requests.TransferRequest) e
 	}
 
 	_, err = services.Create(request.ToAccountID, requests.TransactionRequest{
-		Type:   utils.Deposit,
+		Type:   utils.Deposit.String(),
 		Amount: request.Amount,
 	})
 

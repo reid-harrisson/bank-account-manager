@@ -1,5 +1,7 @@
 package utils
 
+import "fmt"
+
 type TransactionType int8
 
 const (
@@ -9,21 +11,20 @@ const (
 )
 
 func (value TransactionType) String() string {
-	switch value {
-	case Deposit:
+	if value == Deposit {
 		return "deposit"
-	case Withdrawal:
+	} else if value == Withdrawal {
 		return "withdrawal"
 	}
-	return ""
+	return "invalid"
 }
 
-func Parse(value string) TransactionType {
+func ParseTransactionType(value string) (TransactionType, error) {
 	switch value {
 	case "deposit":
-		return Deposit
+		return Deposit, nil
 	case "withdrawal":
-		return Withdrawal
+		return Withdrawal, nil
 	}
-	return Invalid
+	return Invalid, fmt.Errorf("invalid transaction type: %s", value)
 }
