@@ -89,6 +89,35 @@ func (handler *TransactionHandler) ReadByAccount(context *fiber.Ctx) error {
 	return responses.TransactionResponses(context, http.StatusOK, transactions)
 }
 
+// Transfer godoc
+// @Summary Transfer funds between accounts
+// @Description Transfer funds from one account to another
+// @Tags Transactions
+// @Accept json
+// @Produce json
+// @Param transaction body requests.TransferRequest true "Transfer details"
+// @Success 201 {object} responses.Message
+// @Failure 400 {object} responses.Error
+// @Failure 500 {object} responses.Error
+// @Router /api/v1/transfer [post]
+func (handler *TransactionHandler) Transfer(context *fiber.Ctx) error {
+	request := requests.TransferRequest{}
+	if err := context.BodyParser(&request); err != nil {
+		return responses.ErrorResponse(context, http.StatusBadRequest, "Invalid request body", err)
+	}
+
+	if err := request.Validate(); err != nil {
+		return responses.ErrorResponse(context, http.StatusBadRequest, "Validation failed", err)
+	}
+
+	err := handler.TransactionService.Transfer(request)
+	if err != nil {
+		return responses.ErrorResponse(context, http.StatusInternalServerError, "Failed to create transaction", err)
+	}
+
+	return responses.MessageResponse(context, http.StatusCreated, "Successfully transferred")
+}
+
 // Helper function to validate UUID format
 func isValidUUID(uuid string) bool {
 	r := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
