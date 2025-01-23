@@ -34,10 +34,12 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 		return models.Transaction{}, utils.ErrInvalidTransactionType
 	}
 
-	account, ok := (*service.Storage.Accounts)[parsedAccountUUID]
+	accountIndex, ok := service.Storage.AccountIndices[parsedAccountUUID]
 	if !ok {
 		return models.Transaction{}, utils.ErrAccountNotFound
 	}
+
+	account := service.Storage.Accounts[accountIndex]
 
 	if parsedType == utils.Withdrawal && account.Balance < request.Amount {
 		return models.Transaction{}, utils.ErrInsufficientFunds
@@ -49,7 +51,7 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 		account.Balance -= request.Amount
 	}
 
-	(*service.Storage.Accounts)[parsedAccountUUID] = account
+	service.Storage.Accounts[accountIndex] = account
 
 	transaction := models.Transaction{
 		ID:        newUUID,
@@ -59,28 +61,30 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 		TimeStamp: time.Now(),
 	}
 
-	(*service.Storage.Transactions)[newUUID] = transaction
+	_, ok = service.Storage.Transactions[parsedAccountUUID]
+	if !ok {
+		service.Storage.Transactions[parsedAccountUUID] = []models.Transaction{}
+	}
+
+	service.Storage.Transactions[parsedAccountUUID] = append(service.Storage.Transactions[parsedAccountUUID], transaction)
 
 	return transaction, nil
 }
 
 func (service *TransactionService) ReadByAccount(accountId string) ([]models.Transaction, error) {
-	transactions := []models.Transaction{}
-
 	parsedAccountUUID, err := uuid.Parse(accountId)
 	if err != nil {
-		return transactions, utils.ErrInvalidUUID
+		return []models.Transaction{}, utils.ErrInvalidUUID
 	}
 
-	_, ok := (*service.Storage.Accounts)[parsedAccountUUID]
+	_, ok := service.Storage.AccountIndices[parsedAccountUUID]
 	if !ok {
-		return transactions, utils.ErrAccountNotFound
+		return []models.Transaction{}, utils.ErrAccountNotFound
 	}
 
-	for _, transaction := range *service.Storage.Transactions {
-		if transaction.AccountID == parsedAccountUUID {
-			transactions = append(transactions, transaction)
-		}
+	transactions, ok := service.Storage.Transactions[parsedAccountUUID]
+	if !ok {
+		return []models.Transaction{}, nil
 	}
 
 	return transactions, nil

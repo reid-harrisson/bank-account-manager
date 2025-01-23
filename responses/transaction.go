@@ -21,7 +21,7 @@ func TransactionResponse(ctx *fiber.Ctx, status int, transaction models.Transact
 		AccountID: transaction.AccountID.String(),
 		Type:      transaction.Type.String(),
 		Amount:    transaction.Amount,
-		TimeStamp: transaction.TimeStamp.Format(time.RFC3339),
+		TimeStamp: transaction.TimeStamp.Format(time.RFC3339Nano),
 	})
 }
 
@@ -33,7 +33,7 @@ func TransactionResponses(ctx *fiber.Ctx, status int, transactions []models.Tran
 			AccountID: account.AccountID.String(),
 			Type:      account.Type.String(),
 			Amount:    account.Amount,
-			TimeStamp: account.TimeStamp.Format(time.RFC3339),
+			TimeStamp: account.TimeStamp.Format(time.RFC3339Nano),
 		})
 	}
 	return Response(ctx, status, transactionResponses)

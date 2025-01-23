@@ -7,16 +7,19 @@ import (
 )
 
 type Storage struct {
-	Accounts     *map[uuid.UUID]models.Account
-	Transactions *map[uuid.UUID]models.Transaction
+	Accounts       []models.Account
+	Transactions   map[uuid.UUID][]models.Transaction
+	AccountIndices map[uuid.UUID]int
 }
 
 func Create() *Storage {
-	accounts := map[uuid.UUID]models.Account{}
-	transactions := map[uuid.UUID]models.Transaction{}
+	accounts := []models.Account{}
+	transactions := map[uuid.UUID][]models.Transaction{}
+	accountIndices := map[uuid.UUID]int{}
 
 	return &Storage{
-		Accounts:     &accounts,
-		Transactions: &transactions,
+		Accounts:       accounts,
+		AccountIndices: accountIndices,
+		Transactions:   transactions,
 	}
 }
