@@ -5,8 +5,7 @@ import (
 	"bank-account-manager/requests"
 	"bank-account-manager/server"
 	"bank-account-manager/storage"
-
-	"fmt"
+	"bank-account-manager/utils"
 
 	"github.com/google/uuid"
 )
@@ -14,8 +13,6 @@ import (
 type AccountService struct {
 	Storage *storage.Storage
 }
-
-var ErrAccountNotFound = fmt.Errorf("account not found")
 
 func CreateAccountService(server *server.Server) *AccountService {
 	return &AccountService{
@@ -39,12 +36,12 @@ func (service *AccountService) Create(request requests.AccountRequest) (models.A
 func (service *AccountService) ReadOne(id string) (models.Account, error) {
 	parsedUUID, err := uuid.Parse(id)
 	if err != nil {
-		return models.Account{}, err
+		return models.Account{}, utils.ErrInvalidUUID
 	}
 
 	account, ok := (*service.Storage.Accounts)[parsedUUID]
 	if !ok {
-		return models.Account{}, ErrAccountNotFound
+		return models.Account{}, utils.ErrAccountNotFound
 	}
 
 	return account, nil

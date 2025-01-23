@@ -16,9 +16,9 @@ func Response(context *fiber.Ctx, statusCode int, data interface{}) error {
 	return context.Status(statusCode).JSON(data)
 }
 
-func ErrorResponse(ctx *fiber.Ctx, status int, message string, err error) error {
+func ErrorResponse(ctx *fiber.Ctx, status int, message string) error {
 	return Response(ctx, status, Error{
-		Error: message + ": " + err.Error(),
+		Error: message,
 	})
 }
 

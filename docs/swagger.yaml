@@ -1,3 +1,4 @@
+basePath: /api/v1/
 definitions:
   requests.AccountRequest:
     properties:
@@ -11,7 +12,7 @@ definitions:
       amount:
         type: number
       type:
-        $ref: '#/definitions/utils.TransactionType'
+        type: string
     type: object
   requests.TransferRequest:
     properties:
@@ -45,7 +46,7 @@ definitions:
     properties:
       account_id:
         type: string
-      balance:
+      amount:
         type: number
       id:
         type: string
@@ -54,20 +55,13 @@ definitions:
       type:
         type: string
     type: object
-  utils.TransactionType:
-    enum:
-    - 0
-    - 1
-    - 2
-    type: integer
-    x-enum-varnames:
-    - Deposit
-    - Withdrawal
-    - Invalid
 info:
   contact: {}
+  description: RESTful API endpoints for Bank Account Management
+  title: Bank Account Manager API
+  version: "1.0"
 paths:
-  /api/v1/accounts:
+  /accounts:
     get:
       consumes:
       - application/json
@@ -117,7 +111,7 @@ paths:
       summary: Create a new bank account
       tags:
       - Accounts
-  /api/v1/accounts/{id}:
+  /accounts/{id}:
     get:
       consumes:
       - application/json
@@ -150,7 +144,7 @@ paths:
       summary: Get a bank account by ID
       tags:
       - Accounts
-  /api/v1/accounts/{id}/transactions:
+  /accounts/{id}/transactions:
     get:
       consumes:
       - application/json
@@ -215,7 +209,7 @@ paths:
       summary: Create a new transaction
       tags:
       - Transactions
-  /api/v1/transfer:
+  /transfer:
     post:
       consumes:
       - application/json

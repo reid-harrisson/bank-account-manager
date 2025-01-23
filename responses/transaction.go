@@ -11,7 +11,7 @@ type Transaction struct {
 	ID        string  `json:"id"`
 	AccountID string  `json:"account_id"`
 	Type      string  `json:"type"`
-	Amount    float64 `json:"balance"`
+	Amount    float64 `json:"amount"`
 	TimeStamp string  `json:"timestamp"`
 }
 

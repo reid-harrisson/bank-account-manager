@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/accounts": {
+        "/accounts": {
             "get": {
                 "description": "Retrieves all bank accounts' details",
                 "consumes": [
@@ -91,7 +91,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/accounts/{id}": {
+        "/accounts/{id}": {
             "get": {
                 "description": "Retrieves a bank account's details by its ID",
                 "consumes": [
@@ -141,7 +141,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/accounts/{id}/transactions": {
+        "/accounts/{id}/transactions": {
             "get": {
                 "description": "Retrieves all transactions for the specified bank account",
                 "consumes": [
@@ -239,7 +239,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/transfer": {
+        "/transfer": {
             "post": {
                 "description": "Transfer funds from one account to another",
                 "consumes": [
@@ -305,7 +305,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "type": {
-                    "$ref": "#/definitions/utils.TransactionType"
+                    "type": "string"
                 }
             }
         },
@@ -359,7 +359,7 @@ const docTemplate = `{
                 "account_id": {
                     "type": "string"
                 },
-                "balance": {
+                "amount": {
                     "type": "number"
                 },
                 "id": {
@@ -372,31 +372,18 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "utils.TransactionType": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2
-            ],
-            "x-enum-varnames": [
-                "Deposit",
-                "Withdrawal",
-                "Invalid"
-            ]
         }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/api/v1/",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Bank Account Manager API",
+	Description:      "RESTful API endpoints for Bank Account Management",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
