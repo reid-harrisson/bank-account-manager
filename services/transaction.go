@@ -3,7 +3,6 @@ package services
 import (
 	"bank-account-manager/models"
 	"bank-account-manager/requests"
-	"bank-account-manager/server"
 	"bank-account-manager/storage"
 	"bank-account-manager/utils"
 	"time"
@@ -15,9 +14,9 @@ type TransactionService struct {
 	Storage *storage.Storage
 }
 
-func CreateTransactionService(server *server.Server) *TransactionService {
+func CreateTransactionService(storage *storage.Storage) *TransactionService {
 	return &TransactionService{
-		Storage: server.Storage,
+		Storage: storage,
 	}
 }
 
@@ -33,6 +32,9 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 	if err != nil {
 		return models.Transaction{}, utils.ErrInvalidTransactionType
 	}
+
+	service.Storage.Mutex.Lock()
+	defer service.Storage.Mutex.Unlock()
 
 	accountIndex, ok := service.Storage.AccountIndices[parsedAccountUUID]
 	if !ok {
@@ -59,8 +61,6 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 		TimeStamp: time.Now(),
 	}
 
-	service.Storage.Mutex.Lock()
-
 	service.Storage.Accounts[accountIndex] = account
 
 	_, ok = service.Storage.Transactions[parsedAccountUUID]
@@ -70,8 +70,6 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 
 	service.Storage.Transactions[parsedAccountUUID] = append(service.Storage.Transactions[parsedAccountUUID], transaction)
 
-	service.Storage.Mutex.Unlock()
-
 	return transaction, nil
 }
 
@@ -80,6 +78,9 @@ func (service *TransactionService) ReadByAccount(accountId string) ([]models.Tra
 	if err != nil {
 		return []models.Transaction{}, utils.ErrInvalidUUID
 	}
+
+	service.Storage.Mutex.Lock()
+	defer service.Storage.Mutex.Unlock()
 
 	_, ok := service.Storage.AccountIndices[parsedAccountUUID]
 	if !ok {

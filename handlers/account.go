@@ -18,7 +18,7 @@ type AccountHandler struct {
 
 func CreateAccountHandler(server *server.Server) *AccountHandler {
 	return &AccountHandler{
-		AccountService: services.CreateAccountService(server),
+		AccountService: services.CreateAccountService(server.Storage),
 	}
 }
 

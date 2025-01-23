@@ -3,7 +3,6 @@ package services
 import (
 	"bank-account-manager/models"
 	"bank-account-manager/requests"
-	"bank-account-manager/server"
 	"bank-account-manager/storage"
 	"bank-account-manager/utils"
 
@@ -14,9 +13,9 @@ type AccountService struct {
 	Storage *storage.Storage
 }
 
-func CreateAccountService(server *server.Server) *AccountService {
+func CreateAccountService(storage *storage.Storage) *AccountService {
 	return &AccountService{
-		Storage: server.Storage,
+		Storage: storage,
 	}
 }
 
@@ -28,11 +27,12 @@ func (service *AccountService) Create(request requests.AccountRequest) (models.A
 		Balance: request.InitialBalance,
 	}
 
-	index := len(service.Storage.Accounts)
 	service.Storage.Mutex.Lock()
+	defer service.Storage.Mutex.Unlock()
+
+	index := len(service.Storage.Accounts)
 	service.Storage.Accounts = append(service.Storage.Accounts, account)
 	service.Storage.AccountIndices[newUUID] = index
-	service.Storage.Mutex.Unlock()
 	return account, nil
 }
 
@@ -41,6 +41,9 @@ func (service *AccountService) ReadOne(id string) (models.Account, error) {
 	if err != nil {
 		return models.Account{}, utils.ErrInvalidUUID
 	}
+
+	service.Storage.Mutex.Lock()
+	defer service.Storage.Mutex.Unlock()
 
 	index, ok := service.Storage.AccountIndices[parsedUUID]
 	if !ok {
@@ -51,5 +54,9 @@ func (service *AccountService) ReadOne(id string) (models.Account, error) {
 }
 
 func (service *AccountService) ReadAll() ([]models.Account, error) {
+
+	service.Storage.Mutex.Lock()
+	defer service.Storage.Mutex.Unlock()
+
 	return service.Storage.Accounts, nil
 }
