@@ -1,0 +1,52 @@
+definitions:
+  requests.AccountRequest:
+    properties:
+      inital_balance:
+        type: number
+      owner:
+        type: string
+    type: object
+  responses.Error:
+    properties:
+      error:
+        type: string
+    type: object
+  responses.Message:
+    properties:
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/accounts:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new bank account with the provided details
+      parameters:
+      - description: Account details
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/requests.AccountRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/responses.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.Error'
+      summary: Create a new bank account
+      tags:
+      - Accounts
+swagger: "2.0"

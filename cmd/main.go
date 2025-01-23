@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bank-account-manager/routes"
 	"bank-account-manager/server"
 	"fmt"
 	"log"
@@ -9,12 +10,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func init() {
-	// Configure logging
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-}
-
-func loadEnvConfig() (string, error) {
+func loadPort() (string, error) {
 	if err := godotenv.Load(".env"); err != nil {
 		return "", fmt.Errorf("failed to load .env file: %w", err)
 	}
@@ -28,13 +24,16 @@ func loadEnvConfig() (string, error) {
 }
 
 func main() {
-	port, err := loadEnvConfig()
+	port, err := loadPort()
 	if err != nil {
 		log.Fatalf("Configuration error: %v", err)
 	}
 
-	srv := server.Create()
-	if err := srv.Listen(port); err != nil {
+	server := server.Create()
+
+	routes.ConfigRoutes(server)
+
+	if err := server.Listen(port); err != nil {
 		log.Fatalf("Server error: %v", err)
 	}
 }
