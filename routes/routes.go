@@ -9,10 +9,6 @@ import (
 	"github.com/gofiber/swagger"
 )
 
-// @Title Bank Account Manager API
-// @Version 1.0
-// @BasePath /api/v1
-// @Description RESTful API endpoints for Bank Account Management
 func ConfigRoutes(server *server.Server) {
 	server.App.Get("/swagger/*", swagger.HandlerDefault)
 	server.App.Get("/", redirectToSwagger)

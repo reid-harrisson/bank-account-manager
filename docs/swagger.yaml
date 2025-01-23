@@ -1,3 +1,4 @@
+basePath: /api/v1/
 definitions:
   requests.AccountRequest:
     properties:
@@ -66,6 +67,9 @@ definitions:
     - Invalid
 info:
   contact: {}
+  description: RESTful API endpoints for Bank Account Management
+  title: Bank Account Manager API
+  version: "1.0"
 paths:
   /api/v1/accounts:
     get:

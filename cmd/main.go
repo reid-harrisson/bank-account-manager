@@ -23,6 +23,10 @@ func loadPort() (string, error) {
 	return port, nil
 }
 
+// @Title Bank Account Manager API
+// @Version 1.0
+// @BasePath /api/v1/
+// @Description RESTful API endpoints for Bank Account Management
 func main() {
 	port, err := loadPort()
 	if err != nil {
