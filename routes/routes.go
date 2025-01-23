@@ -9,12 +9,10 @@ import (
 	"github.com/gofiber/swagger"
 )
 
-// @Title Fiber Swagger Example API
+// @Title Bank Account Manager API
 // @Version 1.0
-// @Description This is a sample server server.
-// @License.name Apache 2.0
-// @Host localhost:8080
-// @BasePath /api/v1/
+// @BasePath /api/v1
+// @Description RESTful API endpoints for Bank Account Management
 func ConfigRoutes(server *server.Server) {
 	server.App.Get("/swagger/*", swagger.HandlerDefault)
 	server.App.Get("/", redirectToSwagger)
