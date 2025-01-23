@@ -51,8 +51,6 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 		account.Balance -= request.Amount
 	}
 
-	service.Storage.Accounts[accountIndex] = account
-
 	transaction := models.Transaction{
 		ID:        newUUID,
 		AccountID: parsedAccountUUID,
@@ -61,12 +59,18 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 		TimeStamp: time.Now(),
 	}
 
+	service.Storage.Mutex.Lock()
+
+	service.Storage.Accounts[accountIndex] = account
+
 	_, ok = service.Storage.Transactions[parsedAccountUUID]
 	if !ok {
 		service.Storage.Transactions[parsedAccountUUID] = []models.Transaction{}
 	}
 
 	service.Storage.Transactions[parsedAccountUUID] = append(service.Storage.Transactions[parsedAccountUUID], transaction)
+
+	service.Storage.Mutex.Unlock()
 
 	return transaction, nil
 }

@@ -29,8 +29,10 @@ func (service *AccountService) Create(request requests.AccountRequest) (models.A
 	}
 
 	index := len(service.Storage.Accounts)
+	service.Storage.Mutex.Lock()
 	service.Storage.Accounts = append(service.Storage.Accounts, account)
 	service.Storage.AccountIndices[newUUID] = index
+	service.Storage.Mutex.Unlock()
 	return account, nil
 }
 
