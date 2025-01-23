@@ -1,0 +1,4 @@
+# Ignore any Git repository files  
+.git  
+*.md  
+*.log
