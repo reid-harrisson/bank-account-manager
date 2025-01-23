@@ -13,7 +13,7 @@ var (
 )
 
 func init() {
-	server := s.Create()
+	server = s.Create()
 
 	routes.ConfigRoutes(server)
 }
