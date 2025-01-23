@@ -110,9 +110,5 @@ func (services *TransactionService) Transfer(request requests.TransferRequest) e
 		Amount: request.Amount,
 	})
 
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
