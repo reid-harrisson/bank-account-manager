@@ -15,7 +15,7 @@ type AccountService struct {
 	Storage *storage.Storage
 }
 
-func CreateAccountService(server server.Server) *AccountService {
+func CreateAccountService(server *server.Server) *AccountService {
 	return &AccountService{
 		Storage: server.Storage,
 	}
