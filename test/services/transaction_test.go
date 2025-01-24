@@ -51,9 +51,9 @@ func TestTransfer(t *testing.T) {
 
 	// Test transfer
 	transferRequest := requests.TransferRequest{
-		FromAcountID: fromAccount.ID.String(),
-		ToAccountID:  toAccount.ID.String(),
-		Amount:       300,
+		FromAccountID: fromAccount.ID.String(),
+		ToAccountID:   toAccount.ID.String(),
+		Amount:        300,
 	}
 
 	err := transactionService.Transfer(transferRequest)
