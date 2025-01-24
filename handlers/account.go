@@ -1,5 +1,7 @@
+// Package handlers contains HTTP request handlers for the bank account manager
 package handlers
 
+// Import necessary packages for handling HTTP requests, responses, and services
 import (
 	"bank-account-manager/requests"
 	"bank-account-manager/responses"
@@ -34,20 +36,25 @@ func CreateAccountHandler(server *server.Server) *AccountHandler {
 // @Failure 500 {object} responses.Error
 // @Router /accounts [post]
 func (handler *AccountHandler) Create(context *fiber.Ctx) error {
+
+	// Parse request body into AccountRequest struct
 	request := requests.AccountRequest{}
 	if err := context.BodyParser(&request); err != nil {
-		return responses.ErrorResponse(context, http.StatusBadRequest, "Invalid request body")
+		return responses.ErrorResponse(context, http.StatusBadRequest, utils.MsgInvalidRequestBody)
 	}
 
+	// Validate the request data
 	if err := request.Validate(); err != nil {
-		return responses.ErrorResponse(context, http.StatusBadRequest, "Validation failed")
+		return responses.ErrorResponse(context, http.StatusBadRequest, utils.MsgValidationFailed)
 	}
 
+	// Attempt to create account using service layer
 	account, err := handler.AccountService.Create(request)
 	if err != nil {
-		return responses.ErrorResponse(context, http.StatusInternalServerError, "Failed to create account")
+		return responses.ErrorResponse(context, http.StatusInternalServerError, utils.MsgFailedCreateAccount)
 	}
 
+	// Return successful response with created account details
 	return responses.AccountResponse(context, http.StatusCreated, account)
 }
 
@@ -64,22 +71,26 @@ func (handler *AccountHandler) Create(context *fiber.Ctx) error {
 // @Failure 500 {object} responses.Error
 // @Router /accounts/{id} [get]
 func (handler *AccountHandler) ReadOne(context *fiber.Ctx) error {
+	// Extract account ID from request parameters
 	id := context.Params("id")
 	if id == "" {
-		return responses.ErrorResponse(context, http.StatusBadRequest, "ID cannot be empty")
+		return responses.ErrorResponse(context, http.StatusBadRequest, utils.MsgIDCannotBeEmpty)
 	}
 
+	// Attempt to retrieve account using service layer
 	account, err := handler.AccountService.ReadOne(id)
 	if err != nil {
-		if err == utils.ErrInvalidUUID {
-			return responses.ErrorResponse(context, http.StatusBadRequest, "Invalid Account UUID")
+		// Handle different error cases with appropriate HTTP status codes
+		switch err {
+		case utils.ErrInvalidUUID:
+			return responses.ErrorResponse(context, http.StatusBadRequest, utils.MsgInvalidUUID)
+		case utils.ErrAccountNotFound:
+			return responses.ErrorResponse(context, http.StatusNotFound, utils.MsgAccountNotFound)
 		}
-		if err == utils.ErrAccountNotFound {
-			return responses.ErrorResponse(context, http.StatusNotFound, "Account not found")
-		}
-		return responses.ErrorResponse(context, http.StatusInternalServerError, "Failed to retrieve account")
+		return responses.ErrorResponse(context, http.StatusInternalServerError, utils.MsgFailedRetrieveAccount)
 	}
 
+	// Return successful response with account details
 	return responses.AccountResponse(context, http.StatusOK, account)
 }
 
@@ -93,10 +104,12 @@ func (handler *AccountHandler) ReadOne(context *fiber.Ctx) error {
 // @Failure 500 {object} responses.Error
 // @Router /accounts [get]
 func (handler *AccountHandler) ReadAll(context *fiber.Ctx) error {
+	// Attempt to retrieve all accounts using service layer
 	accounts, err := handler.AccountService.ReadAll()
 	if err != nil {
-		return responses.ErrorResponse(context, http.StatusInternalServerError, "Failed to retrieve accounts")
+		return responses.ErrorResponse(context, http.StatusInternalServerError, utils.MsgFailedRetrieveAccounts)
 	}
 
+	// Return successful response with all accounts
 	return responses.AccountResponses(context, http.StatusOK, accounts)
 }
