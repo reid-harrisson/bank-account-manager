@@ -50,15 +50,15 @@ func (service *TransactionService) Create(accountId string, request requests.Tra
 		return models.Transaction{}, utils.ErrInsufficientFunds
 	}
 
-	// Update storage with new account balance
-	service.Storage.Accounts[accountIndex] = account
-
 	// Update account balance based on transaction type
 	if parsedType == utils.Deposit {
 		account.Balance += request.Amount
 	} else if parsedType == utils.Withdrawal {
 		account.Balance -= request.Amount
 	}
+
+	// Update storage with new account balance
+	service.Storage.Accounts[accountIndex] = account
 
 	// Create new transaction with unique ID
 	newUUID := uuid.New()

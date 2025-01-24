@@ -76,21 +76,33 @@ The Bank Account Manager is a simple RESTful API built in Go for managing bank a
    cd bank-account-manager
    ```
 
-2. **Install Dependencies:**
-   Ensure you have Go installed. Run:
+2. **Run with Go Dependencies:**
 
    ```bash
+   # Install dependencies (requires Go to be installed)
    go mod tidy
-   ```
 
-3. **Run the Application:**
+   # Run unit tests
+   go test ./...
 
-   ```bash
+   # Start the application
    go run main.go
    ```
 
-4. **Test the API:**
-   After running the application, navigate to `http://localhost:8000` in your web browser. This will redirect you to the Swagger documentation, where you can test the APIs.
+   Once running, visit `http://localhost:8000` in your web browser to access the Swagger documentation and test the APIs.
+
+3. **Run with Docker:**
+
+   ```bash
+   # Build and start the application using Docker Compose
+   docker-compose up
+   ```
+
+   Once running, visit `http://localhost:8000` in your web browser to access the Swagger documentation and test the APIs.
+
+4. **Test Live Demo:**
+   A live demo of this service is deployed on Vercel and available at:
+   `https://bank-account-manager-three.vercel.app`
 
 ## License
 
